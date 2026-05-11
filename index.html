@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PolyU AMA Programme Planner | Dr. Charles Lee</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  .tab-active { color: #b91c1c !important; border-bottom-color: #b91c1c !important; background-color: #fef2f2; }
+  .draggable { cursor: grab; user-select: none; transition: all 0.15s; }
+  .draggable:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .draggable:active { cursor: grabbing; opacity: 0.5; }
+  .drop-slot { transition: all 0.2s; min-height: 80px; }
+  .drop-slot.drag-over { background-color: #fef3c7 !important; border-color: #f59e0b !important; border-style: solid !important; }
+  .scroll-y { max-height: 70vh; overflow-y: auto; }
+  .scroll-y::-webkit-scrollbar { width: 6px; }
+  .scroll-y::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  .badge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .warn-pulse { animation: pulse 1.4s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+  .toast { position: fixed; top: 80px; right: 20px; z-index: 100; padding: 12px 20px; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.18); animation: slideIn .25s ease; }
+  @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
+
+  /* ============= PRINT STYLES ============= */
+  @media print {
+    @page { size: A4; margin: 12mm; }
+    body { background: white !important; font-size: 11pt; }
+    header, nav, footer, .no-print, #pool-section, .toast { display: none !important; }
+    main { max-width: 100% !important; padding: 0 !important; }
+    .print-only { display: block !important; }
+    .print-break-avoid { page-break-inside: avoid; }
+    .shadow-sm, .shadow, .shadow-lg { box-shadow: none !important; }
+    .bg-white { background: white !important; }
+    .rounded-xl, .rounded-lg, .rounded { border-radius: 4px !important; }
+    .draggable { cursor: default !important; }
+    button[onclick*="removeCourse"] { display: none !important; }
+    .drop-slot { border: 1px solid #cbd5e1 !important; min-height: auto !important; }
+  }
+  .print-only { display: none; }
+</style>
+</head>
+<body class="bg-slate-100 min-h-screen">
+
+<header class="bg-gradient-to-r from-red-800 via-red-900 to-red-950 text-white shadow-lg no-print">
+  <div class="max-w-7xl mx-auto px-4 py-5">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold">📊 AMA Programme Planner</h1>
+        <p class="text-red-100 text-sm">Department of Applied Mathematics · The Hong Kong Polytechnic University</p>
+      </div>
+      <div class="text-right text-sm">
+        <p class="text-red-200 text-xs">Coordinated by</p>
+        <p class="font-semibold">Dr. LEE Kei Fung, Charles</p>
+        <p class="text-xs text-red-200">Assistant Programme Leader · Academic Advisor</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="bg-white shadow-sm border-b sticky top-0 z-30 no-print">
+  <div class="max-w-7xl mx-auto px-2">
+    <div class="flex space-x-1 overflow-x-auto">
+      <button onclick="switchView('overview')" id="tab-overview" class="px-4 py-3 font-medium text-slate-700 hover:bg-slate-50 border-b-2 border-transparent whitespace-nowrap tab-active">📚 Programme Overview</button>
+      <button onclick="switchView('planner')" id="tab-planner" class="px-4 py-3 font-medium text-slate-700 hover:bg-slate-50 border-b-2 border-transparent whitespace-nowrap">🎯 Custom Planner</button>
+      <button onclick="switchView('library')" id="tab-library" class="px-4 py-3 font-medium text-slate-700 hover:bg-slate-50 border-b-2 border-transparent whitespace-nowrap">📖 Course Library</button>
+      <button onclick="switchView('saved')" id="tab-saved" class="px-4 py-3 font-medium text-slate-700 hover:bg-slate-50 border-b-2 border-transparent whitespace-nowrap">💾 Saved Plans</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Print header (only visible when printing) -->
+<div class="print-only mb-4 pb-3 border-b-2 border-slate-300">
+  <h1 class="text-2xl font-bold">PolyU AMA Study Plan</h1>
+  <p class="text-sm text-slate-600">Bachelor of Science (Honours) Scheme in Applied Mathematics and Finance Analytics</p>
+  <p class="text-xs text-slate-500" id="print-date"></p>
+</div>
+
+<main id="content" class="max-w-7xl mx-auto px-4 py-6"></main>
+
+<footer class="bg-slate-800 text-slate-300 text-center py-4 mt-12 text-sm no-print">
+  <p>Programme Code 63430 · 2025/2026 Curriculum</p>
+  <p class="text-xs text-slate-400 mt-1">⚠️ This planner is a study aid. Refer to the official PRD for authoritative requirements.</p>
+</footer>
+
+<div id="toast-container"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
